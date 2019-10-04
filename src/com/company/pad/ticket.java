@@ -1,8 +1,21 @@
 package com.company.pad;
 
-public class tickets extends item {
+public class ticket extends item {
+    private String type;
 
-    public tickets(String name, String type, float price, int count) {
-        super(name, type, price, count);
+    public ticket(String name, float price, int count, String type) {
+        super(name, price, count);
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return "ticket{" +
+                "type='" + type + '\'' +
+                '}';
     }
 }
