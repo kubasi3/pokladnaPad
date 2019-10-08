@@ -41,13 +41,10 @@ public abstract class item implements interfaceItem{
         return price;
     }
 
-    @Override
-    public String toString() {
-        return "item{" +
-                "name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                ", price=" + price +
-                ", count=" + count +
-                '}';
+    public void decreaseCount(int count_){
+        this.count-=count_;
+    }
+    public void decreaseCount(){
+        this.count--;
     }
 }

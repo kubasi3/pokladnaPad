@@ -14,8 +14,12 @@ public class ticket extends item {
 
     @Override
     public String toString() {
-        return "ticket{" +
-                "type='" + type + '\'' +
+        return "item{" +
+                "name='" + this.getName() + '\'' +
+                ", id='" + this.getId() + '\'' +
+                "type='" + this.type + '\'' +
+                ", price=" + this.getPrice() +
+                ", count=" + this.getCount() +
                 '}';
     }
 }
