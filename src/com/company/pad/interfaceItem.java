@@ -1,6 +1,10 @@
 package com.company.pad;
 
-//Ahoj Kuba
-
 public interface interfaceItem {
+    public void newItems(int count);
+    public void changePrice(float price);
+    public float boughtItem(String id);
+
+
+
 }
