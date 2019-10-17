@@ -43,6 +43,8 @@ public class Main {
 
         System.out.println(pokladna.toString());
 
+        System.out.println("Zaplatit: " + pokladna.getSumPrice(buy));
+
         System.out.println("Vratit: " + pokladna.buyItems(buy,2000));
 
         System.out.println(pokladna.toString());
