@@ -52,6 +52,24 @@ public class cashRegister {
         return cash_;
     }
 
+    public float getSumPrice(ArrayList<String> itemsID){
+        float price = 0;
+        HashMap<String, Integer> hm = new HashMap<String, Integer>();
+        for(String x:itemsID){
+            if(!hm.containsKey(x)){
+                hm.put(x,1);
+            }else{
+                hm.put(x, hm.get(x) +1);
+            }
+        }
+        for (item i:this.items) {
+            if (itemsID.contains(i.getId())){
+                price += i.getPrice()* hm.get(i.getId());
+            }
+        }
+        return price;
+    }
+
     public String getItems(){
         String out = "{";
         for (item i:this.items) {
