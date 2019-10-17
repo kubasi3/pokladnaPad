@@ -1,6 +1,6 @@
 package com.company.pad;
 
-public abstract class item implements interfaceItem{
+public abstract class item implements interfaceItem {
     private String name;
     private String id;
     private float price;

@@ -3,7 +3,7 @@ package com.company.pad;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class cashRegister {
+public class cashRegister implements interfaceCashRegister {
     private String name;
     private String cashRegisterID;
     private float cash;
