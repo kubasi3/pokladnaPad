@@ -17,6 +17,14 @@ public class Main {
         items.add(item2);
         items.add(item3);
 
+        candys item4 = new candys("Mars", 30, 30, "coko_tyčinka");
+        candys item5 = new candys("Bebe-cosi", 10, 30, "oplatek");
+        candys item6 = new candys("Bohemia_bramburky", 150, 15, "brambůrky");
+
+        items.add(item4);
+        items.add(item5);
+        items.add(item6);
+
         //Nakup
         ArrayList<String> buy = new ArrayList<>();
         buy.add(item.getId());
@@ -24,6 +32,11 @@ public class Main {
         buy.add(item.getId());
         buy.add(item1.getId());
         buy.add(item1.getId());
+        buy.add(item4.getId());
+        buy.add(item4.getId());
+        buy.add(item5.getId());
+        buy.add(item5.getId());
+        buy.add(item6.getId());
 
         //Pokladna
         cashRegister pokladna = new cashRegister("pakladna1", 2000, items);

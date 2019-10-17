@@ -23,4 +23,3 @@ public class candys extends item {
                 '}';
     }
 }
-}
