@@ -1,11 +1,12 @@
-package com.company.pad;
+package pokladna;
+
 import java.util.UUID;
 
-public class itemId {
-    private  UUID uuid;
+public class ItemId {
+    private UUID uuid;
     private String randomUUIDString;
 
-    public itemId() {
+    public ItemId() {
         this.uuid = UUID.randomUUID();
         this.randomUUIDString = this.uuid.toString();
     }
