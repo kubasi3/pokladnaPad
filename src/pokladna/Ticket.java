@@ -1,9 +1,9 @@
-package com.company.pad;
+package pokladna;
 
-public class ticket extends item {
+public class Ticket extends Item {
     private String type;
 
-    public ticket(String name, float price, int count, String type) {
+    public Ticket(String name, float price, int count, String type) {
         super(name, price, count);
         this.type = type;
     }

@@ -1,25 +1,27 @@
-package com.company.pad;
+package pokladna;
 
-public abstract class item implements interfaceItem {
+public abstract class Item implements interfaceItem {
     private String name;
     private String id;
     private float price;
     private int count;
 
-    public void newItems(int count){
-        this.count=count;
+    public void newItems(int count) {
+        this.count = count;
     }
-    public void changePrice(float price){
-        this.price=price;
+
+    public void changePrice(float price) {
+        this.price = price;
     }
-    public float boughtItem(String id){
+
+    public float boughtItem(String id) {
         this.count--;
         return this.getPrice();
     }
 
-    public item(String name, float price, int count) {
+    public Item(String name, float price, int count) {
         this.name = name;
-        itemId id_ = new itemId();
+        ItemId id_ = new ItemId();
         this.id = id_.getRandomUUIDString();
         this.price = price;
         this.count = count;
@@ -41,10 +43,11 @@ public abstract class item implements interfaceItem {
         return price;
     }
 
-    public void decreaseCount(int count_){
-        this.count-=count_;
+    public void decreaseCount(int count_) {
+        this.count -= count_;
     }
-    public void decreaseCount(){
+
+    public void decreaseCount() {
         this.count--;
     }
 }
