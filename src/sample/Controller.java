@@ -2,24 +2,16 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import pokladna.*;
 import pokladna.TableRow;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,35 +49,27 @@ public class Controller implements Initializable {
     private ObservableList<RowModel> rowModels = FXCollections.observableArrayList();
 
     @FXML
-    private void buttonPay(ActionEvent event) {
+    private void buttonPay() {
         Dialog<RowModel> pay = new Dialog<>();
         pay.setTitle("Pay");
         pay.setWidth(350);
         pay.setHeight(250);
         createPay(pay);
         final Optional<RowModel> vysledek = pay.showAndWait();
-
     }
 
     @FXML
-    private void buttonPrint(ActionEvent event) {
-        String babisovka = "";
+    private void buttonPrint() {
+        StringBuilder babisovka = new StringBuilder();
         for (TableRow i : pokladna.getTableRows(buy)) {
-            String countItems = String.valueOf(i.getCount());
-            babisovka += i.getName();
+            babisovka.append(i.getName());
             if (i.getCount() > 1) {
-                babisovka += "\n"
-                        + String.valueOf(i.getCount())
-                        + "     X     "
-                        + String.valueOf(i.getPrice())
-                        + " Kc     "
-                        + String.valueOf(i.getSumPrice())
-                        + " Kc \n";
+                babisovka.append("\n").append(i.getCount());
+                babisovka.append("     X     ").append(i.getPrice());
+                babisovka.append(" Kc     ").append(i.getSumPrice()).append(" Kc \n");
             } else {
-                babisovka += "\n"
-                        + "                        "
-                        + String.valueOf(i.getSumPrice())
-                        + " Kc\n";
+                babisovka.append("\n" + "                        ");
+                babisovka.append(i.getSumPrice()).append(" Kc\n");
             }
         }
         System.out.println("------------Uctenka------------\n"
@@ -138,7 +122,7 @@ public class Controller implements Initializable {
 
     }
 
-    private void spawnButtons(ArrayList<Item> items){
+    private void spawnButtons(ArrayList<Item> items) {
         for (Item x : items) {
             creatButton(x);
         }
@@ -155,12 +139,12 @@ public class Controller implements Initializable {
         }
     }
 
-    private void creatButton(Item item){
+    private void creatButton(Item item) {
         final Button button = new Button();
         if (item instanceof Ticket) {
             Ticket ticket = (Ticket) item;
             button.setText(ticket.getName() + "\n" + ticket.getType());
-        }else{
+        } else {
             Candys candy = (Candys) item;
             button.setText(candy.getName() + "\n" + candy.getType());
         }
@@ -205,9 +189,7 @@ public class Controller implements Initializable {
 
         Button vypocti = new Button("Vypocti");
         vypocti.setText("Vypocti");
-        vypocti.setOnAction(e -> {
-            vratit.setText(String.valueOf(Float.parseFloat(zaplaceno.getText()) - pokladna.getSumPrice(buy)));
-        });
+        vypocti.setOnAction(e -> vratit.setText(String.valueOf(Float.parseFloat(zaplaceno.getText()) - pokladna.getSumPrice(buy))));
 
         grid.add(zaplacenoLabel, 0, 0);
         grid.add(zaplaceno, 1, 0);
