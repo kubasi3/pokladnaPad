@@ -7,6 +7,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,12 +16,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import pokladna.*;
 import pokladna.TableRow;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -54,12 +58,42 @@ public class Controller implements Initializable {
 
     @FXML
     private void buttonPay(ActionEvent event) {
-        System.out.println("You clicked me!");
+        Dialog<RowModel> pay = new Dialog<>();
+        pay.setTitle("Pay");
+        pay.setWidth(350);
+        pay.setHeight(250);
+        createPay(pay);
+        final Optional<RowModel> vysledek = pay.showAndWait();
+
     }
 
     @FXML
     private void buttonPrint(ActionEvent event) {
-        System.out.println("You clicked me!");
+        String babisovka = "";
+        for (TableRow i : pokladna.getTableRows(buy)) {
+            String countItems = String.valueOf(i.getCount());
+            babisovka += i.getName();
+            if (i.getCount() > 1) {
+                babisovka += "\n"
+                        + String.valueOf(i.getCount())
+                        + "     X     "
+                        + String.valueOf(i.getPrice())
+                        + " Kc     "
+                        + String.valueOf(i.getSumPrice())
+                        + " Kc \n";
+            } else {
+                babisovka += "\n"
+                        + "                        "
+                        + String.valueOf(i.getSumPrice())
+                        + " Kc\n";
+            }
+        }
+        System.out.println("------------Uctenka------------\n"
+                + babisovka
+                + "-------------------------------\nCelkova cena: "
+                + pokladna.getSumPrice(buy)
+                + " Kc"
+        );
     }
 
     @FXML
@@ -151,6 +185,37 @@ public class Controller implements Initializable {
             tableView.setItems(rowModels);
         });
         buttonlist.add(button);
+    }
+
+    private void createPay(Dialog<RowModel> dialog) {
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().setAll(okButton);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(10));
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField zaplaceno = new TextField();
+        zaplaceno.setText("0");
+        Label zaplacenoLabel = new Label("Zaplaceno");
+        Label vratit = new Label("");
+        Label vratitLabel = new Label("Vratit:");
+
+        Button vypocti = new Button("Vypocti");
+        vypocti.setText("Vypocti");
+        vypocti.setOnAction(e -> {
+            vratit.setText(String.valueOf(Float.parseFloat(zaplaceno.getText()) - pokladna.getSumPrice(buy)));
+        });
+
+        grid.add(zaplacenoLabel, 0, 0);
+        grid.add(zaplaceno, 1, 0);
+        grid.add(vratitLabel, 0, 1);
+        grid.add(vratit, 1, 1);
+        grid.add(vypocti, 0, 2);
+
+        dialog.getDialogPane().setContent(grid);
     }
 
 }
