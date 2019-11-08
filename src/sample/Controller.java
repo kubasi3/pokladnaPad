@@ -1,7 +1,9 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -12,6 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pokladna.*;
 import pokladna.TableRow;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +51,9 @@ public class Controller implements Initializable {
     private ArrayList<String> buy = new ArrayList<>();
     private CashRegister pokladna;
 
+    private String fileName = "data";
+    private String fileType = ".txt";
+
     private ObservableList<RowModel> rowModels = FXCollections.observableArrayList();
 
     @FXML
@@ -56,6 +64,7 @@ public class Controller implements Initializable {
         pay.setHeight(250);
         createPay(pay);
         final Optional<RowModel> vysledek = pay.showAndWait();
+        savePokladna();
     }
 
     @FXML
@@ -93,33 +102,20 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //load data from "DB" :)
-        Ticket item = new Ticket("Listek", 20, 30, "student");
-        Ticket item1 = new Ticket("Listek", 60, 30, "dospeli");
-        Ticket item2 = new Ticket("Listek", 150, 15, "rodinné");
-        Ticket item3 = new Ticket("Listek", 30, 30, "senior");
-
-        items.add(item);
-        items.add(item1);
-        items.add(item2);
-        items.add(item3);
-
-        Candys item4 = new Candys("Mars", 30, 30, "coko_tyčinka");
-        Candys item5 = new Candys("Bebe-cosi", 10, 30, "oplatek");
-        Candys item6 = new Candys("Bohemia", 150, 15, "brambůrky");
-
-        items.add(item4);
-        items.add(item5);
-        items.add(item6);
-
         //load pokladna
-        pokladna = new CashRegister("POKLADNA-1", 2000, items);
+        try {
+            pokladna = (CashRegister) SerializationUtil.deserializeObject(fileName + fileType);
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
         Stage window = Main.getPrimaryStage();
+        window.setOnCloseRequest(event -> {
+            savePokladna();
+            event.consume();
+        });
         window.setTitle(pokladna.getName());
-
-        //load products
+        items = pokladna.getItems();
         spawnButtons(items);
-
     }
 
     private void spawnButtons(ArrayList<Item> items) {
@@ -200,4 +196,11 @@ public class Controller implements Initializable {
         dialog.getDialogPane().setContent(grid);
     }
 
+    private void savePokladna() {
+        try {
+            SerializationUtil.serializeObject(pokladna, fileName + fileType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

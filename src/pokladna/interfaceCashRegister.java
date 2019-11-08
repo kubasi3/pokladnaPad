@@ -13,5 +13,5 @@ public interface interfaceCashRegister {
 
     float getSumPrice(ArrayList<String> itemsID);
 
-    String getItems();
+    ArrayList<Item> getItems();
 }

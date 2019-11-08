@@ -1,9 +1,10 @@
 package pokladna;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CashRegister implements interfaceCashRegister {
+public class CashRegister implements interfaceCashRegister, Serializable {
     private String name;
     private String cashRegisterID;
     private float cash;
@@ -100,13 +101,8 @@ public class CashRegister implements interfaceCashRegister {
         return price;
     }
 
-    public String getItems() {
-        StringBuilder out = new StringBuilder("{");
-        for (Item i : this.items) {
-            out.append(i.toString()).append(", ");
-        }
-        out = new StringBuilder(out.substring(0, out.length() - 2) + '}');
-        return out.toString();
+    public ArrayList<Item> getItems() {
+        return this.items;
     }
 
     @Override
