@@ -30,7 +30,7 @@ public class CashRegister implements interfaceCashRegister, Serializable {
         return cash;
     }
 
-    public float buyItems(ArrayList<String> itemsID, float cash_) {
+    public String buyItems(ArrayList<String> itemsID, float cash_) {
         HashMap<String, Integer> hm = new HashMap<>();
         for (String x : itemsID) {
             if (!hm.containsKey(x)) {
@@ -46,11 +46,11 @@ public class CashRegister implements interfaceCashRegister, Serializable {
                     cash_ -= i.getPrice() * hm.get(i.getId());
                     i.decreaseCount(hm.get(i.getId()));
                 } else {
-                    System.err.println("malo peněz");
+                    return "Not enough money!";
                 }
             }
         }
-        return cash_;
+        return String.valueOf(cash_);
     }
 
     public ArrayList<TableRow> getTableRows(ArrayList<String> itemsID) {

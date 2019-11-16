@@ -9,7 +9,7 @@ public interface interfaceCashRegister {
 
     float getCashNow();
 
-    float buyItems(ArrayList<String> itemsID, float cash_);
+    String buyItems(ArrayList<String> itemsID, float cash_);
 
     float getSumPrice(ArrayList<String> itemsID);
 
