@@ -1,13 +1,9 @@
-package sample;
+package gui;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -15,7 +11,6 @@ import javafx.stage.Stage;
 import pokladna.*;
 import pokladna.TableRow;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,10 +41,18 @@ public class Controller implements Initializable {
     @FXML
     private Label count;
 
-    private List<Button> buttonlist = new ArrayList<>();
+    @FXML
+    private Label returnCashLabel;
+
+    @FXML
+    private Label moneyInCashRegister;
+
+
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<String> buy = new ArrayList<>();
-    private CashRegister pokladna;
+    private CashRegister cashRegister;
+
+    private Stage window = Main.getPrimaryStage();
 
     private String fileName = "data";
     private String fileType = ".txt";
@@ -58,19 +61,42 @@ public class Controller implements Initializable {
 
     @FXML
     private void buttonPay() {
-        Dialog<RowModel> pay = new Dialog<>();
-        pay.setTitle("Pay");
-        pay.setWidth(350);
-        pay.setHeight(250);
-        createPay(pay);
-        final Optional<RowModel> vysledek = pay.showAndWait();
-        savePokladna();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("PAY");
+        dialog.setHeaderText("Pay: " + cashRegister.getSumPrice(buy) + " kč");
+        dialog.setContentText("money: ");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(s -> {
+            Float payed = null;
+            try {
+                payed = Float.parseFloat(s);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("This isn't number!!");
+                alert.showAndWait();
+            }
+            if (payed != null) {
+                String returnCash = cashRegister.buyItems(buy, payed);
+                if (!returnCash.equals("Not enough money!")) {
+                    returnCashLabel.setText("Return: " + returnCash + " kč");
+                    buttonPrint();
+                    moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
+                    savePokladna();
+                    buttonReset();
+                } else {
+                    returnCashLabel.setText("Return: " + returnCash);
+                }
+            } else {
+                returnCashLabel.setText("Return: error");
+            }
+        });
     }
 
     @FXML
     private void buttonPrint() {
         StringBuilder babisovka = new StringBuilder();
-        for (TableRow i : pokladna.getTableRows(buy)) {
+        for (TableRow i : cashRegister.getTableRows(buy)) {
             babisovka.append(i.getName());
             if (i.getCount() > 1) {
                 babisovka.append("\n").append(i.getCount());
@@ -84,7 +110,7 @@ public class Controller implements Initializable {
         System.out.println("------------Uctenka------------\n"
                 + babisovka
                 + "-------------------------------\nCelkova cena: "
-                + pokladna.getSumPrice(buy)
+                + cashRegister.getSumPrice(buy)
                 + " Kc"
         );
     }
@@ -93,7 +119,11 @@ public class Controller implements Initializable {
     public void buttonReset() {
         buy.clear();
         tableView.getItems().clear();
-        count.setText("Sum: " + pokladna.getSumPrice(buy));
+        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
+        returnCashLabel.setText("Return: 0 kč");
+        count.setText("Sum: 0 kč");
+        box.getChildren().clear();
+        spawnButtons(items);
     }
 
 
@@ -104,23 +134,27 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //load pokladna
         try {
-            pokladna = (CashRegister) SerializationUtil.deserializeObject(fileName + fileType);
+            cashRegister = (CashRegister) SerializationUtil.deserializeObject(fileName + fileType);
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
-        Stage window = Main.getPrimaryStage();
         window.setOnCloseRequest(event -> {
             savePokladna();
             event.consume();
+            System.exit(0);
         });
-        window.setTitle(pokladna.getName());
-        items = pokladna.getItems();
+        window.setTitle(cashRegister.getName());
+        items = cashRegister.getItems();
         spawnButtons(items);
+        returnCashLabel.setText("Return: 0 kč");
+        count.setText("Sum: " + cashRegister.getSumPrice(buy) + " kč");
+        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
     }
 
     private void spawnButtons(ArrayList<Item> items) {
+        List<Button> buttonlist = new ArrayList<>();
         for (Item x : items) {
-            creatButton(x);
+            creatButton(x, buttonlist);
         }
         int x = 0, y = 0;
         for (Button b : buttonlist) {
@@ -135,28 +169,44 @@ public class Controller implements Initializable {
         }
     }
 
-    private void creatButton(Item item) {
+    private void creatButton(Item item, List<Button> buttonlist) {
         final Button button = new Button();
         if (item instanceof Ticket) {
             Ticket ticket = (Ticket) item;
-            button.setText(ticket.getName() + "\n" + ticket.getType());
+            button.setText(ticket.getName() + "\n" + ticket.getType() + "\n" + ticket.getPrice() + " kč\nks: " + ticket.getCount());
+            if (ticket.getCount() < 1) {
+                button.setDisable(true);
+            }
         } else {
             Candys candy = (Candys) item;
-            button.setText(candy.getName() + "\n" + candy.getType());
+            button.setText(candy.getName() + "\n" + candy.getType() + "\n" + candy.getPrice() + " kč\nks: " + candy.getCount());
+            if (candy.getCount() < 1) {
+                button.setDisable(true);
+            }
         }
         button.setId(item.getId());
         button.setPrefSize(100, 100);
         button.setOnAction(e -> {
             buy.add(button.getId());
-            count.setText("Sum: " + pokladna.getSumPrice(buy));
-
+            count.setText("Sum: " + cashRegister.getSumPrice(buy) + " kč");
+            String text = button.getText();
+            String sum = text.substring(text.length() - 2);
+            String out = text.substring(0, text.length() - 2);
+            int sumAfterClick = Integer.parseInt(sum.replace(" ", "")) - 1;
+            if (!out.substring(out.length() - 1).equals("\n")) {
+                out = out + " ";
+            }
+            button.setText(out + sumAfterClick);
+            if (sumAfterClick < 1) {
+                button.setDisable(true);
+            }
             tableView.getItems().clear();
             name.setCellValueFactory(new PropertyValueFactory<>("Name"));
             priceItem.setCellValueFactory(new PropertyValueFactory<>("PriceItem"));
             sumPrice.setCellValueFactory(new PropertyValueFactory<>("SumPrice"));
             countItems.setCellValueFactory(new PropertyValueFactory<>("Count"));
             //add your data to the table here.
-            for (TableRow i : pokladna.getTableRows(buy)) {
+            for (TableRow i : cashRegister.getTableRows(buy)) {
                 String countItems = String.valueOf(i.getCount());
                 String price = String.valueOf(i.getPrice());
                 String sumPrice = String.valueOf(i.getSumPrice());
@@ -167,38 +217,9 @@ public class Controller implements Initializable {
         buttonlist.add(button);
     }
 
-    private void createPay(Dialog<RowModel> dialog) {
-        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().setAll(okButton);
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setPadding(new Insets(10));
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        TextField zaplaceno = new TextField();
-        zaplaceno.setText("0");
-        Label zaplacenoLabel = new Label("Zaplaceno");
-        Label vratit = new Label("");
-        Label vratitLabel = new Label("Vratit:");
-
-        Button vypocti = new Button("Vypocti");
-        vypocti.setText("Vypocti");
-        vypocti.setOnAction(e -> vratit.setText(String.valueOf(Float.parseFloat(zaplaceno.getText()) - pokladna.getSumPrice(buy))));
-
-        grid.add(zaplacenoLabel, 0, 0);
-        grid.add(zaplaceno, 1, 0);
-        grid.add(vratitLabel, 0, 1);
-        grid.add(vratit, 1, 1);
-        grid.add(vypocti, 0, 2);
-
-        dialog.getDialogPane().setContent(grid);
-    }
-
     private void savePokladna() {
         try {
-            SerializationUtil.serializeObject(pokladna, fileName + fileType);
+            SerializationUtil.serializeObject(cashRegister, fileName + fileType);
         } catch (IOException e) {
             e.printStackTrace();
         }
