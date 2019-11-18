@@ -30,21 +30,13 @@ public class CashRegister implements interfaceCashRegister, Serializable {
         return cash;
     }
 
-    public String buyItems(ArrayList<String> itemsID, float cash_) {
-        HashMap<String, Integer> hm = new HashMap<>();
-        for (String x : itemsID) {
-            if (!hm.containsKey(x)) {
-                hm.put(x, 1);
-            } else {
-                hm.put(x, hm.get(x) + 1);
-            }
-        }
+    public String buyItems(HashMap<String, Integer> shoppingList, float cash_) {
         for (Item i : this.items) {
-            if (itemsID.contains(i.getId())) {
-                if ((i.getPrice() * hm.get(i.getId())) <= cash_) {
-                    this.cash += i.getPrice() * hm.get(i.getId());
-                    cash_ -= i.getPrice() * hm.get(i.getId());
-                    i.decreaseCount(hm.get(i.getId()));
+            if (shoppingList.containsKey(i.getId())) {
+                if ((i.getPrice() * shoppingList.get(i.getId())) <= cash_) {
+                    this.cash += i.getPrice() * shoppingList.get(i.getId());
+                    cash_ -= i.getPrice() * shoppingList.get(i.getId());
+                    i.decreaseCount(shoppingList.get(i.getId()));
                 } else {
                     return "Not enough money!";
                 }
@@ -53,23 +45,11 @@ public class CashRegister implements interfaceCashRegister, Serializable {
         return String.valueOf(cash_);
     }
 
-    public ArrayList<TableRow> getTableRows(ArrayList<String> itemsID) {
-        HashMap<Item, Integer> hm = new HashMap<>();
-        for (String x : itemsID) {
-            for (Item i : this.items) {
-                if (i.getId().equals(x)) {
-                    if (!hm.containsKey(i)) {
-                        hm.put(i, 1);
-                    } else {
-                        hm.put(i, hm.get(i) + 1);
-                    }
-                }
-            }
-        }
+    public ArrayList<TableRow> getTableRows(HashMap<String, Integer> shoppingList) {
         ArrayList<TableRow> rows = new ArrayList<>();
         for (Item i : this.items) {
-            if (itemsID.contains(i.getId())) {
-                int count = hm.get(i);
+            if (shoppingList.containsKey(i.getId())) {
+                int count = shoppingList.get(i.getId());
                 if (i instanceof Ticket) {
                     Ticket ticket = (Ticket) i;
                     rows.add(new TableRow(ticket.getName() + "-" + ticket.getType(), ticket.getPrice(), ticket.getPrice() * count, count));
@@ -83,19 +63,11 @@ public class CashRegister implements interfaceCashRegister, Serializable {
     }
 
 
-    public float getSumPrice(ArrayList<String> itemsID) {
+    public float getSumPrice(HashMap<String, Integer> shoppingList) {
         float price = 0;
-        HashMap<String, Integer> hm = new HashMap<>();
-        for (String x : itemsID) {
-            if (!hm.containsKey(x)) {
-                hm.put(x, 1);
-            } else {
-                hm.put(x, hm.get(x) + 1);
-            }
-        }
         for (Item i : this.items) {
-            if (itemsID.contains(i.getId())) {
-                price += i.getPrice() * hm.get(i.getId());
+            if (shoppingList.containsKey(i.getId())) {
+                price += i.getPrice() * shoppingList.get(i.getId());
             }
         }
         return price;

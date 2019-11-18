@@ -13,10 +13,7 @@ import pokladna.TableRow;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Controller implements Initializable {
 
@@ -49,7 +46,7 @@ public class Controller implements Initializable {
 
 
     private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<String> buy = new ArrayList<>();
+    private HashMap<String, Integer> buy = new HashMap<>();
     private CashRegister cashRegister;
 
     private Stage window = Main.getPrimaryStage();
@@ -187,7 +184,11 @@ public class Controller implements Initializable {
         button.setId(item.getId());
         button.setPrefSize(100, 100);
         button.setOnAction(e -> {
-            buy.add(button.getId());
+            if (buy.containsKey(button.getId())) {
+                buy.put(button.getId(), buy.get(button.getId()) + 1);
+            } else {
+                buy.put(button.getId(), 1);
+            }
             count.setText("Sum: " + cashRegister.getSumPrice(buy) + " kč");
             String text = button.getText();
             String sum = text.substring(text.length() - 2);
