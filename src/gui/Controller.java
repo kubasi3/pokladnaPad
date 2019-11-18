@@ -80,7 +80,7 @@ public class Controller implements Initializable {
                     buttonPrint();
                     moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
                     savePokladna();
-                    buttonReset();
+                    buttonResetAfterPay();
                 } else {
                     returnCashLabel.setText("Return: " + returnCash);
                 }
@@ -114,10 +114,15 @@ public class Controller implements Initializable {
 
     @FXML
     public void buttonReset() {
+        buttonResetAfterPay();
+        returnCashLabel.setText("Return: 0 kč");
+
+    }
+
+    public void buttonResetAfterPay() {
         buy.clear();
         tableView.getItems().clear();
         moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
-        returnCashLabel.setText("Return: 0 kč");
         count.setText("Sum: 0 kč");
         box.getChildren().clear();
         spawnButtons(items);
@@ -214,6 +219,7 @@ public class Controller implements Initializable {
                 rowModels.add(new RowModel(i.getName(), countItems, price, sumPrice));
             }
             tableView.setItems(rowModels);
+            returnCashLabel.setText("Return: 0 kč");
         });
         buttonlist.add(button);
     }
