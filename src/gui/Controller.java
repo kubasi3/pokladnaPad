@@ -169,10 +169,8 @@ public class Controller implements Initializable {
             if (x > 5) {
                 y++;
                 x = 0;
-                if (y > 4) {
-                    System.err.println("ITEMS OVERFLOW!(Y)");
-                }
             }
+            box.setMaxHeight(y*100);
         }
     }
 
@@ -194,7 +192,7 @@ public class Controller implements Initializable {
             }
         }
         button.setId(item.getId());
-        button.setPrefSize(100, 100);
+        button.setPrefSize(102, 100);
         button.setOnAction(e -> {
             if (buy.containsKey(button.getId())) {
                 buy.put(button.getId(), buy.get(button.getId()) + 1);
