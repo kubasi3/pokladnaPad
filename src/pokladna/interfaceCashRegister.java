@@ -1,6 +1,7 @@
 package pokladna;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface interfaceCashRegister {
     String getName();
@@ -9,9 +10,9 @@ public interface interfaceCashRegister {
 
     float getCashNow();
 
-    float buyItems(ArrayList<String> itemsID, float cash_);
+    String buyItems(HashMap<String, Integer> shoppingList, float cash_);
 
-    float getSumPrice(ArrayList<String> itemsID);
+    float getSumPrice(HashMap<String, Integer> shoppingList);
 
-    String getItems();
+    ArrayList<Item> getItems();
 }

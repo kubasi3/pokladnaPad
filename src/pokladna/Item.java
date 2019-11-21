@@ -1,6 +1,8 @@
 package pokladna;
 
-public abstract class Item implements interfaceItem {
+import java.io.Serializable;
+
+public abstract class Item implements interfaceItem, Serializable {
     private String name;
     private String id;
     private float price;
