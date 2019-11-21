@@ -170,7 +170,7 @@ public class Controller implements Initializable {
                 y++;
                 x = 0;
             }
-            box.setMaxHeight(y*100);
+            box.setMaxHeight(y * 100);
         }
     }
 
@@ -203,8 +203,9 @@ public class Controller implements Initializable {
             String text = button.getText();
             String sum = text.substring(text.length() - 2);
             String out = text.substring(0, text.length() - 2);
+            sum = sum.replace(":", " ");
             int sumAfterClick = Integer.parseInt(sum.replace(" ", "")) - 1;
-            if (!out.substring(out.length() - 1).equals("\n")) {
+            if (sumAfterClick < 10) {
                 out = out + " ";
             }
             button.setText(out + sumAfterClick);
