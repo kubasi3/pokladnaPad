@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import pokladna.CashRegister;
-import pokladna.Data;
+import pokladna.DataLoader;
 import pokladna.SerializationUtil;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class Main extends Application {
         String fileType = ".txt";
         try {
             if (!(new File(fileName + fileType).exists())) {
-                CashRegister pokladna = Data.creatCashRegister();
+                CashRegister pokladna = DataLoader.creatCashRegister();
                 SerializationUtil.serializeObject(pokladna, fileName + fileType);
             }
         } catch (IOException e) {

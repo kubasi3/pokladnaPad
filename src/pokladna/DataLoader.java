@@ -2,10 +2,12 @@ package pokladna;
 
 import java.util.ArrayList;
 
-public class Data {
+//load data from "fake" database :)
+
+public class DataLoader {
     private static ArrayList<Item> creatItems() {
         ArrayList<Item> items = new ArrayList<>();
-        //load data from "DB" :)
+
         Ticket item = new Ticket("Listek", 20, 30, "student");
         Ticket item1 = new Ticket("Listek", 60, 30, "dospeli");
         Ticket item2 = new Ticket("Listek", 150, 15, "rodinné");
