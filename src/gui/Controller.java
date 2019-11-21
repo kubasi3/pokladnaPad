@@ -60,7 +60,7 @@ public class Controller implements Initializable {
     private void buttonPay() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("PAY");
-        dialog.setHeaderText("Pay: " + cashRegister.getSumPrice(buy) + " kč");
+        dialog.setHeaderText("Pay: " + cashRegister.getSumPrice(buy) + "  " + cashRegister.getCurrency());
         dialog.setContentText("money: ");
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(s -> {
@@ -76,9 +76,10 @@ public class Controller implements Initializable {
             if (payed != null) {
                 String returnCash = cashRegister.buyItems(buy, payed);
                 if (!returnCash.equals("Not enough money!")) {
-                    returnCashLabel.setText("Return: " + returnCash + " kč");
+                    returnCashLabel.setText("Return: " + returnCash + "  " + cashRegister.getCurrency());
                     buttonPrint();
-                    moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
+                    moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() +
+                            "  " + cashRegister.getCurrency());
                     savePokladna();
                     buttonResetAfterPay();
                 } else {
@@ -98,32 +99,35 @@ public class Controller implements Initializable {
             if (i.getCount() > 1) {
                 babisovka.append("\n").append(i.getCount());
                 babisovka.append("     X     ").append(i.getPrice());
-                babisovka.append(" Kc     ").append(i.getSumPrice()).append(" Kc \n");
+                babisovka.append(" Kc     ").append(i.getSumPrice()).append("  ");
+                babisovka.append(cashRegister.getCurrency()).append(" \n");
             } else {
                 babisovka.append("\n" + "                        ");
-                babisovka.append(i.getSumPrice()).append(" Kc\n");
+                babisovka.append(i.getSumPrice()).append("  ");
+                babisovka.append(cashRegister.getCurrency()).append("\n");
             }
         }
         System.out.println("------------Uctenka------------\n"
                 + babisovka
                 + "-------------------------------\nCelkova cena: "
                 + cashRegister.getSumPrice(buy)
-                + " Kc"
+                + "  " + cashRegister.getCurrency()
         );
     }
 
     @FXML
     public void buttonReset() {
         buttonResetAfterPay();
-        returnCashLabel.setText("Return: 0 kč");
+        returnCashLabel.setText("Return: 0  " + cashRegister.getCurrency());
 
     }
 
-    public void buttonResetAfterPay() {
+    private void buttonResetAfterPay() {
         buy.clear();
         tableView.getItems().clear();
-        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
-        count.setText("Sum: 0 kč");
+        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() +
+                "  " + cashRegister.getCurrency());
+        count.setText("Sum: 0  " + cashRegister.getCurrency());
         box.getChildren().clear();
         spawnButtons(items);
     }
@@ -148,9 +152,10 @@ public class Controller implements Initializable {
         window.setTitle(cashRegister.getName());
         items = cashRegister.getItems();
         spawnButtons(items);
-        returnCashLabel.setText("Return: 0 kč");
-        count.setText("Sum: " + cashRegister.getSumPrice(buy) + " kč");
-        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() + " kč");
+        returnCashLabel.setText("Return: 0 " + cashRegister.getCurrency());
+        count.setText("Sum: " + cashRegister.getSumPrice(buy) + " " + cashRegister.getCurrency());
+        moneyInCashRegister.setText("Money in Cash Register: " + cashRegister.getCashNow() +
+                "  " + cashRegister.getCurrency());
     }
 
     private void spawnButtons(ArrayList<Item> items) {
@@ -175,13 +180,15 @@ public class Controller implements Initializable {
         final Button button = new Button();
         if (item instanceof Ticket) {
             Ticket ticket = (Ticket) item;
-            button.setText(ticket.getName() + "\n" + ticket.getType() + "\n" + ticket.getPrice() + " kč\nks: " + ticket.getCount());
+            button.setText(ticket.getName() + "\n" + ticket.getType() + "\n" + ticket.getPrice() +
+                    "  " + cashRegister.getCurrency() + "\nks: " + ticket.getCount());
             if (ticket.getCount() < 1) {
                 button.setDisable(true);
             }
         } else {
             Candys candy = (Candys) item;
-            button.setText(candy.getName() + "\n" + candy.getType() + "\n" + candy.getPrice() + " kč\nks: " + candy.getCount());
+            button.setText(candy.getName() + "\n" + candy.getType() + "\n" + candy.getPrice() +
+                    " " + cashRegister.getCurrency() + " \nks: " + candy.getCount());
             if (candy.getCount() < 1) {
                 button.setDisable(true);
             }
@@ -194,7 +201,7 @@ public class Controller implements Initializable {
             } else {
                 buy.put(button.getId(), 1);
             }
-            count.setText("Sum: " + cashRegister.getSumPrice(buy) + " kč");
+            count.setText("Sum: " + cashRegister.getSumPrice(buy) + "  " + cashRegister.getCurrency());
             String text = button.getText();
             String sum = text.substring(text.length() - 2);
             String out = text.substring(0, text.length() - 2);
@@ -219,7 +226,7 @@ public class Controller implements Initializable {
                 rowModels.add(new RowModel(i.getName(), countItems, price, sumPrice));
             }
             tableView.setItems(rowModels);
-            returnCashLabel.setText("Return: 0 kč");
+            returnCashLabel.setText("Return: 0  " + cashRegister.getCurrency());
         });
         buttonlist.add(button);
     }

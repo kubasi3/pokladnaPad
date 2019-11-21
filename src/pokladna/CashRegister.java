@@ -9,17 +9,23 @@ public class CashRegister implements interfaceCashRegister, Serializable {
     private String cashRegisterID;
     private float cash;
     private ArrayList<Item> items;
+    private String currency;
 
-    public CashRegister(String name, float cash, ArrayList<Item> items) {
+    public CashRegister(String name, float cash,String currency, ArrayList<Item> items) {
         this.name = name;
         ItemId id_ = new ItemId();
         this.cashRegisterID = id_.getRandomUUIDString();
         this.cash = cash;
+        this.currency = currency;
         this.items = items;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 
     public String getCashRegisterID() {
