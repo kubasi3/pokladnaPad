@@ -27,6 +27,6 @@ public class Data {
     }
 
     public static CashRegister creatCashRegister() {
-        return new CashRegister("POKLADNA-1", 2000, creatItems());
+        return new CashRegister("POKLADNA-1", 2000,"Kč", creatItems());
     }
 }
