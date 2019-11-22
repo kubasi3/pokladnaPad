@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import pokladna.CashRegister;
-import pokladna.Data;
+import pokladna.DataLoader;
 import pokladna.SerializationUtil;
 
 import java.io.File;
@@ -25,11 +25,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        CashRegister pokladna = Data.creatCashRegister();
         String fileName = "data";
         String fileType = ".txt";
         try {
             if (!(new File(fileName + fileType).exists())) {
+                CashRegister pokladna = DataLoader.creatCashRegister();
                 SerializationUtil.serializeObject(pokladna, fileName + fileType);
             }
         } catch (IOException e) {
@@ -39,7 +39,7 @@ public class Main extends Application {
 
         setPrimaryStage(primaryStage); // **Set the Stage**
         Parent root = FXMLLoader.load(getClass().getResource("gui.fxml"));
-        primaryStage.setScene(new Scene(root, 1075, 600));
+        primaryStage.setScene(new Scene(root, 1085, 600));
         primaryStage.show();
     }
 
